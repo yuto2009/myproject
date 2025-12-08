@@ -1,0 +1,17 @@
+{
+  "name": "PHP + MySQL",
+  "image": "mcr.microsoft.com/devcontainers/php:8.2",
+  "features": {
+    "ghcr.io/devcontainers/features/mysql:1": {
+      "version": "latest"
+    }
+  },
+  "postCreateCommand": "composer install || true",
+  "portsAttributes": {
+    "8000": {
+      "label": "PHP Server",
+      "onAutoForward": "notify"
+    }
+  },
+  "forwardPorts": [8000]
+}
