@@ -12,7 +12,8 @@ int main(void)
                         break;
                 }else {
 
-                        printf("kougeki\n");
+                        printf("攻撃\n");
+                        printf("1,2から選んでね\n");
                         scanf("%d",&a);
                         switch (a) {
                                 case 1:
@@ -25,27 +26,25 @@ int main(void)
                                         break;
                         }
                         if(bougyo == 0){
-                                mob = mob - ydps;
+                                mob -= ydps;
                         }
-                        printf("tekilife%d\n",mob);
+                        printf("敵体力%d\n",mob);
 
-                        printf("tekikougeki\n");
-                        if(bougyo >  0){
+                        printf("敵の攻撃\n");
+                        if(bougyo > 0){
                                 bougyo -= mdps;
                         }
                         if(bougyo < 0){
-                                mdps = mdps - 20;
-                                y = y - mdps;
+                                mdps -= 20;
+                                y  -= mdps;
                         }
                         else {
-                                y = y - mdps;
+                                y -= mdps;
                         }
-                        printf("mylife%d\n",y);
+                        printf("自分の体力%d\n",y);
 
                 }
          }
         printf("finish\n");
         return 0;
 }
-~
-~
