@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include<string.h>
 // 構造体らしい
 typedef struct
 {
@@ -101,7 +102,7 @@ void expup(Character *p, Character *enemy, int *exp, int *level)
         p->maxhp += 20;
         p->atk += 5;
         p->hp = p->maxhp;
-        printf("れべるあぷ\n");
+        printf("れべるあぷ%dレベル\n",*level);
     }
     // 追加機能レベルがどこかのラインを超えたら、必要expを上げる
 }
@@ -118,7 +119,7 @@ void show_map(char map[5][20])
     }
 }
 
-void move_player(char map[5][20], int *px, int *py, int dx, int dy)
+int move_player(char map[5][20], int *px, int *py, int dx, int dy)
 {
     int nx = *px + dx;
     int ny = *py + dy;
@@ -126,14 +127,17 @@ void move_player(char map[5][20], int *px, int *py, int dx, int dy)
     if (map[ny][nx] == '#')
     {
         printf("壁だ\n");
-        return;
+        return 1;
     }
     map[*py][*px] = ' ';
     *px += dx;
     *py += dy;
     map[*py][*px] = 'p';
-}
 
+    int kakuritu = rand() % 10;
+    return kakuritu;
+}
+/*
 void move_enemy(char map[5][20], int *ex, int *ey)
 {
 
@@ -172,11 +176,43 @@ void move_enemy(char map[5][20], int *ex, int *ey)
     *ey = ny;
     map[*ey][*ex] = 'e';
 }
+*/
+void show_battle(Character *player , Character *enemy){
+    printf("--------------------\n");
+    printf("[%s]\n",enemy->name);
+    printf("--------------------\n");
+    printf("[%s]\n",player->name);
+    printf("--------------------\n");
+    char boxes[11];
+    char mp_boxes[11];
+    memset(mp_boxes, '-', 10);
+    mp_boxes[10] = '\0';
+    memset(boxes, '-', 10);
+    boxes[10] = '\0';
+    int mp_box  = player->mp *  10 / player->maxmp;
+    int box  = player->hp *  10 / player->maxhp;
+    for(int i = 0; i < box ; i++){
+        boxes[i] = '#'; 
+    }
+    for(int j = 0; j < mp_box ; j++){
+        mp_boxes[j] = '#'; 
+    }
+
+    printf("HP |%s| %d/%d\n",boxes,player->hp,player->maxhp);
+    printf("MP |%s| %d/%d\n",mp_boxes,player->mp,player->maxmp);
+
+    printf("--------------------\n");
+    printf("> 1.たたかう 2.まほう\n");
+    printf("  3.道具     4.なし\n");
+    printf("--------------------\n");
+}
 
 int battle(Character *player, Character *mob, int *potion, int *exp, int *level)
 {
     while (1)
     {
+        system("cls");
+        show_battle(player,mob);
         expup(player, mob, exp, level);
         if (mob->hp <= 0)
         {
@@ -197,14 +233,11 @@ int battle(Character *player, Character *mob, int *potion, int *exp, int *level)
         if (player->hp <= 0)
         {
             printf("gameover\n");
-            printf("%dレベルまで到達\n", level);
+            printf("%dレベルまで到達\n", *level);
             return 0;
         }
 
         int a;
-        printf("攻撃\n");
-        printf("1,2から選んでね\n");
-        printf("1は攻撃、2は魔法、3は回復\n");
         scanf("%d", &a);
 
         int turn_atk = player->atk;
@@ -231,12 +264,10 @@ int battle(Character *player, Character *mob, int *potion, int *exp, int *level)
         {
             enemy_mpattack(mob, player);
         }
-        printf("----------\n");
-        show_status(player);
-        show_status(mob);
-        printf("----------\n");
+        
     }
 }
+
 
 int main(void)
 {
@@ -284,12 +315,14 @@ int main(void)
         case 'q':
             return 0;
         }
-        move_enemy(map, &ex, &ey);
+        //move_enemy(map, &ex, &ey);
         show_status(&player);
         show_map(map);
-        if (px == ex && py == ey)
+        int kakuritu = move_player(map, &px, &py, 0, 0);
+        if (kakuritu == 0)
         {
             printf("戦闘開始\n");
+            show_battle(&player,&enemies[enemy_index]);
             int result = battle(&player, &enemies[enemy_index], &potion, &exp, &level);
             if (result == 0)
             {
